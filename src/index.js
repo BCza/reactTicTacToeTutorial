@@ -28,24 +28,21 @@ class Board extends React.Component {
   }
 
   render() {
-    return (
-      <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
+
+    var board = [];
+
+    for( var i=0; i<3; i++){
+        var children = [];
+        for(var j=0; j<3;j++) {
+            var index = i * 3 + j;
+            children.push(this.renderSquare(index));
+        }
+        board.push(<div className="board-row">{children}</div>);
+    }
+      return (
+    <div>
+        {board}
+    </div>
     );
   }
 }
@@ -98,30 +95,29 @@ class Game extends React.Component {
     const winner = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
-    const desc = move ?
-      'Go to move #' + move :
-      'Go to game start';
-    if(move === this.state.stepNumber) {
-      return (
-        <li>
-          <button onClick={() => this.jumpTo(move)}>
-          <b>
-            {desc}
-          </b>
-          </button>
-        </li>
-      );
-    }else {
-      return (
-        <li>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
-        </li>
-      );
-    }
-      
+        const desc = move ? 'Go to move #' + move :'Go to game start';
+
+        if(move === this.state.stepNumber) {
+          return (
+            <li>
+              <button onClick={() => this.jumpTo(move)}>
+              <b>
+                {desc}
+              </b>
+              </button>
+            </li>
+          );
+        }else {
+          return (
+            <li>
+              <button onClick={() => this.jumpTo(move)}>{desc}</button>
+            </li>
+          );
+        }
     });
 
     let status;
+
     if(winner) {
       status = 'Winner: ' + winner;
     }else { 
