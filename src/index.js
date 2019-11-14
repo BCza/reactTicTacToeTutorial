@@ -61,12 +61,13 @@ class Game extends React.Component {
   }
 
   handleClick(i) {
-    const history = this.state.history.slice(0,this.state.stepNumber + 1);
+    const stepNumber = this.state.stepNumber;
+    const history = this.state.history.slice(0, stepNumber + 1);
     const current = this.state.history[history.length - 1];
     const squares = current.squares.slice();
     // squares[i] = this.state.xIsNext ? 'X' : 'O';
 
-    if(calculateWinner(squares) || squares[i]) {
+    if(calculateWinner(squares, this.state.stepNumber) || squares[i]) {
       return;
     }
 
@@ -92,7 +93,7 @@ class Game extends React.Component {
 
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const winner = calculateWinner(current.squares, this.state.stepNumber);
 
     const moves = history.map((step, move) => {
         const desc = move ? 'Go to move #' + move :'Go to game start';
@@ -149,7 +150,7 @@ ReactDOM.render(
 );
 
 
-function calculateWinner(squares) {
+function calculateWinner(squares, stepNumber) {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -166,5 +167,11 @@ function calculateWinner(squares) {
       return squares[a];
     }
   }
+
+  const drawStepNumber = 9;
+  if(stepNumber === drawStepNumber) {
+      return "It's a draw";
+  }
+
   return null;
 };
