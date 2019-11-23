@@ -2,9 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+const DRAW_STATE = "It's a draw";
+
 function Square(props) {
-  return (
-    <button className="square" onClick={() => props.onClick() } >
+    return (
+    <button className={props.background === "Yellow" ? "square-hightlighted" :"square" } onClick={() => props.onClick()} >
       {props.value}
     </button>
     );
@@ -24,6 +26,7 @@ class Board extends React.Component {
     return <Square 
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
+        background={this.props.winningLine.includes(i) ? "Yellow" : "Blue"}
       />;
   }
 
@@ -94,6 +97,7 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares, this.state.stepNumber);
+    const winningLine = findWinningLine(current.squares);
 
     const moves = history.map((step, move) => {
         const desc = move ? 'Go to move #' + move :'Go to game start';
@@ -120,7 +124,12 @@ class Game extends React.Component {
     let status;
 
     if(winner) {
-      status = 'Winner: ' + winner;
+      
+      if(winner !== DRAW_STATE) {
+        status = 'Winner: ' + winner;
+      }else { 
+        status = DRAW_STATE;
+      }
     }else { 
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
@@ -131,6 +140,7 @@ class Game extends React.Component {
           <Board
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
+            winningLine={winningLine ? winningLine : []}
           />
         </div>
         <div className="game-info">
@@ -151,27 +161,36 @@ ReactDOM.render(
 
 
 function calculateWinner(squares, stepNumber) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
+  var winningLine = findWinningLine(squares);
+
+  if(winningLine) { 
+      return squares[winningLine[0]];
   }
 
   const drawStepNumber = 9;
   if(stepNumber === drawStepNumber) {
-      return "It's a draw";
+      return DRAW_STATE;
   }
 
   return null;
 };
+
+function findWinningLine (squares) { 
+    const lines = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+      for (let i = 0; i < lines.length; i++) {
+        const [a, b, c] = lines[i];
+        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+          return lines[i];
+        }
+      }
+    return null;
+}
