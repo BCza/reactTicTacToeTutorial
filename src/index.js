@@ -1,19 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import _times from 'lodash/times';
 
 const DRAW_STATE = "It's a draw";
+const ROWS = 3;
+const COLS = 3;
+const HIGHLIGHTED_COLOR = "Yellow";
+const HIGHLIGHTED_CLASS = "square-hightlighted";
+const REG_CLASS = "square";
 
 function Square(props) {
     return (
-    <button className={props.background === "Yellow" ? "square-hightlighted" :"square" } onClick={() => props.onClick()} >
+    <button className={props.background === HIGHLIGHTED_COLOR ? HIGHLIGHTED_CLASS : REG_CLASS } onClick={() => props.onClick()} >
       {props.value}
     </button>
     );
 }
 
 class Board extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -26,26 +31,24 @@ class Board extends React.Component {
     return <Square 
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
-        background={this.props.winningLine.includes(i) ? "Yellow" : "Blue"}
+        background={this.props.winningLine.includes(i) ? HIGHLIGHTED_COLOR : null }
       />;
   }
 
   render() {
 
-    var board = [];
+    const board = _times(ROWS, (index) => {
+        const children =  _times(COLS, (col_index) => { 
+            const sq_index = index * 3 + col_index;
+            return this.renderSquare(sq_index);
+        });
+        return <div className="board-row">{children}</div>;
+    });
 
-    for( var i=0; i<3; i++){
-        var children = [];
-        for(var j=0; j<3;j++) {
-            var index = i * 3 + j;
-            children.push(this.renderSquare(index));
-        }
-        board.push(<div className="board-row">{children}</div>);
-    }
-      return (
-    <div>
-        {board}
-    </div>
+    return (
+        <div>
+            {board}
+        </div>
     );
   }
 }
@@ -68,7 +71,6 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, stepNumber + 1);
     const current = this.state.history[history.length - 1];
     const squares = current.squares.slice();
-    // squares[i] = this.state.xIsNext ? 'X' : 'O';
 
     if(calculateWinner(squares, this.state.stepNumber) || squares[i]) {
       return;
