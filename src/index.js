@@ -63,7 +63,15 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
+      moves_decending: true
     }
+  }
+
+  onToggleClicked() {
+      console.log("toggle");
+      this.setState({
+          moves_decending: !this.state.moves_decending
+      });
   }
 
   handleClick(i) {
@@ -123,6 +131,8 @@ class Game extends React.Component {
         }
     });
 
+    const movesDisplayOrder = this.state.moves_decending ? moves : moves.reverse();
+
     let status;
 
     if(winner) {
@@ -147,7 +157,8 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <ul>{movesDisplayOrder}</ul>
+          <button onClick={() => this.onToggleClicked()}>Toggle Moves</button>
         </div>
       </div>
     );
