@@ -7,6 +7,18 @@ ol, ul {
   padding-left: 30px;
 }
 
+li button{ 
+    display: inline-block;
+}
+
+li { 
+    font-size: 10px;
+}
+
+.move-item {
+    margin-left: 5px;
+}
+
 .board-row:after {
   clear: both;
   content: "";
