@@ -1,5 +1,5 @@
 /* eslint-disable no-template-curly-in-string */
-import React from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import _times from 'lodash/times';
@@ -89,7 +89,7 @@ class Game extends React.Component {
     squares[i] = this.state.xIsNext ? 'X' : 'O';
 
     const currentRow = Math.floor(i/3) + 1;
-    const currentCol = i % 3;
+    const currentCol = i % 3 + 1;
 
     this.setState({
       history: history.concat([{
@@ -117,7 +117,7 @@ class Game extends React.Component {
 
     const moves = history.map((step, move) => {
         const desc = move ? 'Go to move #' + move :'Go to game start';
-        const button = move === this.state.stepNumber ? <button><b>{desc}</b></button> : <button>{desc}</button>;
+        const button = move === this.state.stepNumber ? <button onClick={() => {this.jumpTo(move)}}><b>{desc}</b></button> : <button onClick={() => {this.jumpTo(move)}}>{desc}</button>;
         const currentMove = history[move].currentMove;
         const moveSet =  currentMove ? <span className="move-item">({currentMove[0]},{currentMove[1]})</span> : null; 
 
