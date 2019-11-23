@@ -134,19 +134,7 @@ class Game extends React.Component {
     });
 
     const movesDisplayOrder = this.state.moves_decending ? moves : moves.reverse();
-
-    let status;
-
-    if(winner) {
-      
-      if(winner !== DRAW_STATE) {
-        status = 'Winner: ' + winner;
-      }else { 
-        status = DRAW_STATE;
-      }
-    }else { 
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    }
+    const status = determineStatus(winner, this.state.xIsNext);
 
     return (
       <div className="game">
@@ -174,9 +162,19 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
+function determineStatus(winner, xIsNext) {
+    const isWinner =  winner !== null;
+    const isDraw = winner && winner === DRAW_STATE;
+
+    if(isWinner) {
+        return isDraw ? DRAW_STATE : 'Winner: ' + winner;
+    }
+
+    return 'Next player: ' + (xIsNext ? 'X' : 'O');
+}
 
 function calculateWinner(squares, stepNumber) {
-  var winningLine = findWinningLine(squares);
+  const winningLine = findWinningLine(squares);
 
   if(winningLine) { 
       return squares[winningLine[0]];
