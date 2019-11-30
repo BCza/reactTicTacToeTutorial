@@ -44,70 +44,59 @@ function Board(props) {
     );
 }
 
-class Game extends React.Component {
+const Game = () => {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      history: [{
-        squares: Array(9).fill(null),
-        currentMove: null,
-      }],
-      stepNumber: 0,
-      xIsNext: true,
-      moves_decending: true
-    }
+    const [history, setHistory] = useState(
+        [{squares: Array(9).fill(null), currentMove: null,}]
+    );
+
+    const [stepNumber, setStepNumber] = useState(0);
+    const [xIsNext, setXIsNext] = useState(true);
+    const [moves_decending, setMovesDecending] = useState(true);
+
+  const onToggleClicked = () => {
+      setMovesDecending(!moves_decending);
   }
 
-  onToggleClicked() {
-      console.log("toggle");
-      this.setState({
-          moves_decending: !this.state.moves_decending
-      });
-  }
-
-  handleClick(i) {
-    const stepNumber = this.state.stepNumber;
-    const history = this.state.history.slice(0, stepNumber + 1);
-    const current = this.state.history[history.length - 1];
+  const handleClick = (i) => {
+    const currentHistory = history.slice(0, stepNumber + 1);
+    const current = currentHistory[history.length - 1];
     const squares = current.squares.slice();
 
-    if(calculateWinner(squares, this.state.stepNumber) || squares[i]) {
+    if(calculateWinner(squares, stepNumber) || squares[i]) {
       return;
     }
 
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    squares[i] = xIsNext ? 'X' : 'O';
 
     const currentRow = Math.floor(i/3) + 1;
     const currentCol = i % 3 + 1;
 
-    this.setState({
-      history: history.concat([{
-        squares: squares,
-        currentMove: [currentRow, currentCol],
-      }]),
-      stepNumber: history.length,
-      xIsNext: !this.state.xIsNext,
-    });
+    setHistory(
+        currentHistory.concat({
+            squares,
+            currentMove: [currentRow, currentCol]
+        })
+    ); 
+
+    setStepNumber(history.length);
+    setXIsNext(!xIsNext);
   }
 
-  jumpTo(step) {
-    this.setState({
-      stepNumber: step,
-      xIsNext: (step % 2) === 0,
-    });
+  const jumpTo = (step) => {
+    setStepNumber(step);
+    setXIsNext((step % 2) === 0); 
   }
-  
-  render() {
 
-    const history = this.state.history;
-    const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares, this.state.stepNumber);
+    const current = history[stepNumber];
+    const winner = calculateWinner(current.squares, stepNumber);
     const winningLine = findWinningLine(current.squares);
 
     const moves = history.map((step, move) => {
         const desc = move ? 'Go to move #' + move :'Go to game start';
-        const button = move === this.state.stepNumber ? <button onClick={() => {this.jumpTo(move)}}><b>{desc}</b></button> : <button onClick={() => {this.jumpTo(move)}}>{desc}</button>;
+        const stepValue = move === stepNumber ? <b>{desc}</b> : desc;
+        const button = <button onClick={() => {jumpTo(move)}}>{stepValue}</button>;
+
         const currentMove = history[move].currentMove;
         const moveSet =  currentMove ? <span className="move-item">({currentMove[0]},{currentMove[1]})</span> : null; 
 
@@ -123,27 +112,26 @@ class Game extends React.Component {
         );
     });
 
-    const movesDisplayOrder = this.state.moves_decending ? moves : moves.reverse();
-    const status = determineStatus(winner, this.state.xIsNext);
+    const movesDisplayOrder = moves_decending ? moves : moves.reverse();
+    const status = determineStatus(winner, xIsNext);
 
     return (
       <div className="game">
         <div className="game-board">
           <Board
             squares={current.squares}
-            onClick={(i) => this.handleClick(i)}
+            onClick={(i) => handleClick(i)}
             winningLine={winningLine ? winningLine : []}
           />
         </div>
         <div className="game-info">
           <div>{status}</div>
           <ul>{movesDisplayOrder}</ul>
-          <button onClick={() => this.onToggleClicked()}>Toggle Moves</button>
+          <button onClick={() => onToggleClicked()}>Toggle Moves</button>
         </div>
       </div>
     );
-  }
-}
+};
 
 // ========================================
 
