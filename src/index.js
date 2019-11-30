@@ -19,29 +19,20 @@ function Square(props) {
     );
 }
 
-class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares : Array(9).fill(null),
-      xIsNext: true,
-    };
-  }
+function Board(props) {
 
-  renderSquare(i) {
+    const renderSquare = (i) => {
     return <Square 
-        value={this.props.squares[i]}
-        onClick={() => this.props.onClick(i)}
-        background={this.props.winningLine.includes(i) ? HIGHLIGHTED_COLOR : null }
-      />;
-  }
-
-  render() {
+        value={props.squares[i]}
+        onClick={() => props.onClick(i)}
+        background={props.winningLine.includes(i) ? HIGHLIGHTED_COLOR : null }
+        />;
+    }
 
     const board = _times(ROWS, (index) => {
         const children =  _times(COLS, (col_index) => { 
             const sq_index = index * 3 + col_index;
-            return this.renderSquare(sq_index);
+            return renderSquare(sq_index);
         });
         return <div className="board-row">{children}</div>;
     });
@@ -51,7 +42,6 @@ class Board extends React.Component {
             {board}
         </div>
     );
-  }
 }
 
 class Game extends React.Component {
