@@ -2,47 +2,9 @@
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import _times from 'lodash/times';
+import Board from './board';
 
 const DRAW_STATE = "It's a draw";
-const ROWS = 3;
-const COLS = 3;
-const HIGHLIGHTED_COLOR = "Yellow";
-const HIGHLIGHTED_CLASS = "square-hightlighted";
-const REG_CLASS = "square";
-
-function Square(props) {
-    return (
-    <button className={props.background === HIGHLIGHTED_COLOR ? HIGHLIGHTED_CLASS : REG_CLASS } onClick={() => props.onClick()} >
-      {props.value}
-    </button>
-    );
-}
-
-function Board(props) {
-
-    const renderSquare = (i) => {
-    return <Square 
-        value={props.squares[i]}
-        onClick={() => props.onClick(i)}
-        background={props.winningLine.includes(i) ? HIGHLIGHTED_COLOR : null }
-        />;
-    }
-
-    const board = _times(ROWS, (index) => {
-        const children =  _times(COLS, (col_index) => { 
-            const sq_index = index * 3 + col_index;
-            return renderSquare(sq_index);
-        });
-        return <div className="board-row">{children}</div>;
-    });
-
-    return (
-        <div>
-            {board}
-        </div>
-    );
-}
 
 const Game = () => {
 
@@ -53,10 +15,6 @@ const Game = () => {
     const [stepNumber, setStepNumber] = useState(0);
     const [xIsNext, setXIsNext] = useState(true);
     const [moves_decending, setMovesDecending] = useState(true);
-
-  const onToggleClicked = () => {
-      setMovesDecending(!moves_decending);
-  }
 
   const handleClick = (i) => {
     const currentHistory = history.slice(0, stepNumber + 1);
@@ -127,7 +85,7 @@ const Game = () => {
         <div className="game-info">
           <div>{status}</div>
           <ul>{movesDisplayOrder}</ul>
-          <button onClick={() => onToggleClicked()}>Toggle Moves</button>
+          <button onClick={() => setMovesDecending(!moves_decending)}>Toggle Moves</button>
         </div>
       </div>
     );
